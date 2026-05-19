@@ -111,30 +111,218 @@ abaixo para entender a arquitetura completa.
     arquivo da página vira praticamente uma "lista de compras" de
     blocos.
 
-## Como rodar
+## Pré-requisitos
+
+Só uma coisa: **Node.js 18.17.1 ou superior** (recomendamos a LTS
+atual, 22.x). O `npm` já vem junto na instalação do Node.
+
+```bash
+node --version    # precisa retornar v18.17.1 ou mais novo
+npm --version
+```
+
+Como instalar Node:
+
+- **macOS:** `brew install node` (ou baixar de [nodejs.org](https://nodejs.org))
+- **Linux:** via [nvm](https://github.com/nvm-sh/nvm) (recomendado):
+  ```bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  nvm install --lts
+  ```
+- **Windows:** instalador em [nodejs.org](https://nodejs.org) ou
+  [nvm-windows](https://github.com/coreybutler/nvm-windows)
+
+> **Não instale o Astro globalmente.** Ele já está listado como
+> dependência do projeto no `package.json` e é instalado localmente
+> dentro de `node_modules/` pelo `npm install`. Isso garante que cada
+> projeto fique amarrado à sua própria versão do Astro.
+
+### Recomendado: extensão Astro no editor
+
+Se usar **VS Code** ou **Cursor**, instale a extensão oficial
+[`astro-build.astro-vscode`](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode).
+Ela traz syntax highlight, autocomplete e validação de TypeScript
+dentro dos arquivos `.astro`. Sem ela funciona, mas o editor não
+colore os `.astro`, o que atrapalha bastante.
+
+## Desenvolvimento local
+
+Depois de clonar o repositório:
 
 ```bash
 cd astro-poc
-npm install
-npm run dev       # http://localhost:4321
-npm run build     # gera dist/ com HTML estático puro
-npm run preview   # serve o dist/ localmente
+npm install       # uma vez por repo (demora ~20-30s na primeira vez)
+npm run dev       # sobe servidor com hot reload
 ```
 
-O `npm run build` gera exatamente a estrutura de URLs que queremos:
+O terminal vai mostrar:
 
 ```
-dist/
+🚀  astro  v6.3.5 started in 102ms
+
+┃ Local    http://localhost:4321/
+```
+
+Abra `http://localhost:4321/` no navegador. A página inicial lista
+as 3 LPs da POC. Editar qualquer arquivo `.astro`, `.ts` ou `.css`
+recarrega o navegador automaticamente.
+
+## Build de produção (geração dos sites estáticos)
+
+```bash
+cd astro-poc
+npm run build
+```
+
+Saída típica:
+
+```
+[build] output: "static"
+[build] mode: "static"
+[build] directory: /workspace/astro-poc/dist/
+
+ generating static routes 
+  ├─ /fia/fia01/index.html (+9ms) 
+  ├─ /fia/fia02/index.html (+3ms) 
+  ├─ /jornada-dados/jd01/index.html (+5ms) 
+  ├─ /index.html (+2ms) 
+✓ Completed in 30ms.
+
+[build] 4 page(s) built in 848ms
+```
+
+O que o `npm run build` faz por baixo do capô:
+
+1. Lê todos os arquivos em `src/pages/` e descobre as rotas
+   (file-based routing).
+2. Renderiza cada página para HTML rodando o frontmatter (`---`)
+   em Node, no momento do build.
+3. Bundla o CSS dos componentes, minifica e injeta nas páginas.
+4. Bundla os `<script>` das ilhas e injeta APENAS nas páginas que
+   usam aquela ilha.
+5. Joga tudo na pasta `dist/`.
+
+A pasta `dist/` final contém **HTML estático puro**, exatamente a
+estrutura de URLs que queremos:
+
+```
+astro-poc/dist/
+├── index.html
 ├── fia/
-│   ├── fia01/index.html
-│   └── fia02/index.html
+│   ├── fia01/index.html       ← ~8 KB, zero JavaScript
+│   └── fia02/index.html       ← ~10 KB (com countdown inline)
 └── jornada-dados/
-    └── jd01/index.html
+    └── jd01/index.html        ← ~8 KB, zero JavaScript
 ```
 
-Esse `dist/` é jogado em qualquer CDN estática (Cloudflare Pages,
-Vercel, Netlify, S3 + CloudFront) e pronto — zero servidor, zero
-Node em produção.
+Você pode abrir um desses arquivos diretamente no navegador para
+inspecionar:
+
+```bash
+# macOS
+open dist/fia/fia01/index.html
+# Linux
+xdg-open dist/fia/fia01/index.html
+# Windows
+start dist\fia\fia01\index.html
+```
+
+## Preview da versão de produção
+
+```bash
+cd astro-poc
+npm run preview
+```
+
+Serve a pasta `dist/` num servidor HTTP local em
+`http://localhost:4321/`, simulando como o site se comporta em
+produção. **Diferença para `npm run dev`:** o `preview` serve a
+versão buildada e minificada, sem hot reload. Use para validar que
+o build saiu certo antes de publicar.
+
+## Deploy em produção
+
+A pasta `dist/` é HTML estático puro — não precisa de Node em
+produção. Pode ser servida por qualquer CDN estática. Três caminhos,
+do mais simples para o mais técnico:
+
+### Opção A — Drag and drop manual (só para testes)
+
+1. Rode `npm run build` localmente.
+2. Acesse [pages.cloudflare.com](https://pages.cloudflare.com)
+   ou [app.netlify.com/drop](https://app.netlify.com/drop).
+3. Arraste a pasta `dist/` para a área indicada.
+4. Em ~30 segundos o site está no ar numa URL temporária.
+
+Bom para demo, ruim para produção (precisa repetir a cada
+atualização).
+
+### Opção B — Integração com GitHub (recomendado)
+
+Este é o fluxo para produção. Setup uma vez, e cada `git push`
+publica sozinho.
+
+1. Conecte o repositório no [Cloudflare Pages](https://pages.cloudflare.com),
+   [Vercel](https://vercel.com) ou [Netlify](https://netlify.com).
+2. Configure:
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Root directory:** `astro-poc` (porque o projeto Astro vive
+     numa subpasta deste repo)
+3. Pronto. A partir daí o fluxo é:
+   ```bash
+   # edita arquivos .astro
+   git add . && git commit -m "nova LP" && git push
+   # ~30s depois, está no ar
+   ```
+
+### Opção C — GitHub Actions + S3/CloudFront
+
+Se já tiverem infra AWS, crie um workflow que rode `npm run build`
+e use `aws s3 sync dist/ s3://lp-asimov/ --delete` para publicar,
+seguido de invalidação do CloudFront. Só vale a pena se já existe
+um motivo para usar AWS em vez de Cloudflare/Vercel/Netlify.
+
+### Recomendação para a Asimov
+
+**Cloudflare Pages**, pelos seguintes motivos:
+
+- Gratuito até 500 builds por mês (mais que suficiente).
+- Build em ~30 segundos.
+- CDN global da Cloudflare (latência baixa em qualquer lugar).
+- Integração nativa com GitHub.
+- Suporte nativo a Astro (aparece como template no setup).
+- Se o DNS do `asimov.academy` já estiver na Cloudflare, configurar
+  o subdomínio `lp.asimov.academy` é um clique.
+
+## Configurando o domínio `lp.asimov.academy`
+
+Independente da plataforma escolhida:
+
+1. No painel da plataforma (Cloudflare Pages, Vercel, Netlify), vá
+   em **Custom domains** e adicione `lp.asimov.academy`.
+2. A plataforma vai te dar um valor de **CNAME** (ou IP).
+3. No provedor de DNS de `asimov.academy`, crie um registro CNAME
+   apontando `lp` para esse valor.
+4. Em alguns minutos o domínio propaga e a plataforma gera o
+   certificado SSL automaticamente.
+
+Depois disso, `lp.asimov.academy/fia/fia01/` vai renderizar
+exatamente o arquivo `dist/fia/fia01/index.html` que o Astro gerou.
+
+## Resumo dos comandos
+
+Todos rodados de dentro da pasta `astro-poc/`:
+
+```bash
+npm install        # uma vez por repo
+npm run dev        # desenvolvimento (localhost:4321, hot reload)
+npm run build      # gera dist/ com HTML estático puro
+npm run preview    # serve dist/ localmente para validar produção
+```
+
+Em produção (Cloudflare Pages, Vercel, Netlify): você não roda
+esses comandos manualmente — a plataforma roda no `git push`.
 
 ## Resultado mensurável da POC
 
