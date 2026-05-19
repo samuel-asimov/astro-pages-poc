@@ -1,0 +1,80 @@
+---
+/* ============================================================================
+ * src/components/blocks/Hero.astro — BLOCO HERO (TÍTULO + SUBTÍTULO + CTA)
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * O Hero é o primeiro bloco de praticamente toda LP. Tem sempre a mesma
+ * estrutura visual (título grande, subtítulo, botão de CTA), mas com:
+ *   - Textos diferentes por LP
+ *   - Cores diferentes por DOMÍNIO (FIA usa um gradient azul, Jornada
+ *     de Dados usa um gradient verde-petróleo)
+ *
+ * Em HTML puro, refazer essa estrutura a cada LP nova é trabalho
+ * mecânico que custa tempo e gera inconsistência visual sutil (cada
+ * pessoa escreve o CSS de um jeito ligeiramente diferente).
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Componente parametrizado: a ESTRUTURA é fixa (h1 + p + CTA), os
+ * CONTEÚDOS vêm por props, o BRANDING vem do domínio.
+ *
+ * Note como o componente importa `dominios` e resolve as cores
+ * automaticamente a partir do `dominio` recebido. A página que usa
+ * o Hero só precisa dizer "dominio=fia" — ela nem precisa saber qual
+ * é a cor da FIA. Se a FIA mudar de azul para roxo, é uma linha em
+ * `src/data/dominios.ts` e todas as LPs da FIA atualizam.
+ *
+ * SOBRE O CTABUTTON
+ * -----------------
+ * O Hero compõe o CTAButton em vez de reimplementar um <a> estilizado.
+ * Isso é COMPOSIÇÃO DE COMPONENTES: blocos grandes são feitos de blocos
+ * menores. É o oposto do Elementor, onde cada bloco é uma caixa fechada.
+ * ========================================================================== */
+
+import CTAButton from '../ui/CTAButton.astro';
+import { dominios, type DominioId } from '../../data/dominios.ts';
+
+interface Props {
+  dominio: DominioId;
+  titulo: string;
+  subtitulo: string;
+  ctaTexto: string;
+  ctaHref?: string;
+}
+
+const { dominio, titulo, subtitulo, ctaTexto, ctaHref = '#inscricao' } = Astro.props;
+const d = dominios[dominio];
+---
+
+<section
+  class="hero"
+  style={`background: linear-gradient(135deg, ${d.corPrimaria} 0%, #0a0a0a 100%);`}
+>
+  <div class="container">
+    <h1>{titulo}</h1>
+    <p>{subtitulo}</p>
+    <CTAButton href={ctaHref} bg={d.corCta} color={d.corCtaTexto}>
+      {ctaTexto}
+    </CTAButton>
+  </div>
+</section>
+
+<style>
+  .hero {
+    color: #fff;
+    padding: 96px 0;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 20px;
+    opacity: 0.85;
+    margin-bottom: 32px;
+  }
+</style>

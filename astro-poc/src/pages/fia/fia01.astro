@@ -1,0 +1,80 @@
+---
+/* ============================================================================
+ * src/pages/fia/fia01.astro  →  URL: lp.asimov.academy/fia/fia01
+ * ============================================================================
+ *
+ * ESTE É O ARQUIVO QUE PROVA A TESE.
+ *
+ * Olhe a quantidade de código abaixo. Esta é uma LP COMPLETA, com:
+ *   - <head> com title, description, viewport, meta charset
+ *   - Header global com logo, badge "+15.000 alunos" e menu
+ *   - Hero com gradient temático do domínio FIA
+ *   - Bloco de stats puxando dados da fonte única
+ *   - Bloco de pricing com plano, preço, benefícios e CTA
+ *   - FAQ accordion funcional (sem JS)
+ *   - Footer global com copyright e contagem de alunos
+ *
+ * E são ~30 linhas de TypeScript/HTML. Praticamente uma "lista de
+ * compras" de blocos.
+ *
+ * POR QUE ISSO É RELEVANTE PARA O NOSSO CASO
+ * ------------------------------------------
+ *   1. EDIÇÃO HUMANA: qualquer um do time consegue ler este arquivo
+ *      e entender em 10 segundos do que se trata a LP. Não há ruído
+ *      de CSS, header repetido, footer repetido, etc.
+ *
+ *   2. GERAÇÃO POR IA: pedimos pra IA "cria uma LP nova chamada fia03
+ *      copiando a fia01 mas com pricing R$ 1.997 e títulos sobre
+ *      Visão Computacional". A IA olha este arquivo, entende o padrão
+ *      em segundos, e gera o novo arquivo. O contrato é claro.
+ *
+ *   3. CONSISTÊNCIA: é IMPOSSÍVEL essa LP ficar com header diferente
+ *      da fia02, ou com número de alunos diferente da jd01. A
+ *      arquitetura garante consistência.
+ *
+ *   4. PERFORMANCE: esta página é compilada para HTML estático puro
+ *      (~8 KB). Zero JavaScript é enviado ao usuário final.
+ * ========================================================================== */
+
+import LPLayout from '../../layouts/LPLayout.astro';
+import Hero from '../../components/blocks/Hero.astro';
+import Stats from '../../components/blocks/Stats.astro';
+import Pricing from '../../components/blocks/Pricing.astro';
+import FAQAccordion from '../../components/islands/FAQAccordion.astro';
+---
+
+<LPLayout
+  title="FIA 01 - Formação em IA | Asimov Academy"
+  description="Formação completa em Inteligência Artificial: Python, Machine Learning e LLMs."
+>
+  <Hero
+    dominio="fia"
+    titulo="Formação em Inteligência Artificial"
+    subtitulo="Domine Python, Machine Learning e LLMs do zero ao avançado"
+    ctaTexto="Quero me inscrever"
+  />
+
+  <Stats dominio="fia" />
+
+  <Pricing
+    dominio="fia"
+    plano="Plano Anual"
+    preco="R$ 1.497"
+    parcelas="ou 12x de R$ 149,70"
+    beneficios={[
+      'Acesso a todos os 42 cursos',
+      'Certificado reconhecido',
+      'Comunidade exclusiva no Discord',
+      'Mentorias semanais ao vivo',
+    ]}
+    ctaTexto="Garantir minha vaga"
+  />
+
+  <FAQAccordion
+    perguntas={[
+      { q: 'Preciso saber programar antes?', a: 'Não, começamos do zero com Python.' },
+      { q: 'Tem certificado?', a: 'Sim, certificado de conclusão reconhecido pelo mercado.' },
+      { q: 'Por quanto tempo tenho acesso?', a: 'Acesso vitalício ao conteúdo após a compra.' },
+    ]}
+  />
+</LPLayout>

@@ -1,0 +1,61 @@
+---
+/* ============================================================================
+ * src/pages/index.astro — ÍNDICE DA POC
+ * ============================================================================
+ *
+ * Página de desenvolvimento que lista as LPs construídas. Em produção
+ * (lp.asimov.academy) essa URL provavelmente nem existirá ou vai
+ * redirecionar pro site institucional.
+ *
+ * SOBRE O ROTEAMENTO DO ASTRO
+ * ---------------------------
+ * Astro usa "file-based routing": o caminho do arquivo VIRA a URL.
+ *
+ *   src/pages/index.astro                  →  /
+ *   src/pages/fia/fia01.astro              →  /fia/fia01/
+ *   src/pages/jornada-dados/jd01.astro     →  /jornada-dados/jd01/
+ *
+ * Isso é EXATAMENTE o modelo mental que queremos: pasta = domínio,
+ * arquivo = página, URL inferida sem configuração nenhuma.
+ * ========================================================================== */
+
+import LPLayout from '../layouts/LPLayout.astro';
+---
+
+<LPLayout
+  title="POC - Asimov LPs com Astro"
+  description="Índice da POC de landing pages com Astro"
+>
+  <section style="padding: 64px 0;">
+    <div class="container">
+      <h1 style="font-size: 36px; margin-bottom: 16px;">
+        POC — Landing Pages da Asimov com Astro
+      </h1>
+      <p style="color: #666; margin-bottom: 32px; max-width: 720px;">
+        Cada link abaixo é uma LP completa, montada a partir dos mesmos
+        blocos compartilhados. Veja o código de cada página: são
+        aproximadamente 30 linhas, basicamente uma "lista de blocos".
+      </p>
+      <ul style="line-height: 2.2; font-size: 18px; list-style: none;">
+        <li>
+          <a href="/fia/fia01/" style="color: #1a1a40; font-weight: 700;">
+            → /fia/fia01
+          </a>
+          — Formação em IA (LP de entrada, sem JS)
+        </li>
+        <li>
+          <a href="/fia/fia02/" style="color: #1a1a40; font-weight: 700;">
+            → /fia/fia02
+          </a>
+          — Formação em IA (turma avançada, com Countdown = ilha de JS)
+        </li>
+        <li>
+          <a href="/jornada-dados/jd01/" style="color: #003d5b; font-weight: 700;">
+            → /jornada-dados/jd01
+          </a>
+          — Jornada de Dados (outro domínio, mesmos blocos, branding próprio)
+        </li>
+      </ul>
+    </div>
+  </section>
+</LPLayout>

@@ -1,0 +1,89 @@
+---
+/* ============================================================================
+ * src/pages/fia/fia02.astro  →  URL: lp.asimov.academy/fia/fia02
+ * ============================================================================
+ *
+ * VARIAÇÃO DA fia01 — MOSTRA A AGILIDADE DE CRIAR LPS NOVAS
+ *
+ * Esta página é uma turma avançada da FIA. Reutiliza EXATAMENTE os
+ * mesmos blocos da fia01, apenas com:
+ *   - Textos diferentes (turma avançada, foco em RAG/Agentes)
+ *   - Preço diferente
+ *   - Lista de benefícios diferente
+ *   - FAQ adaptado
+ *   - + um Countdown (que a fia01 não tem)
+ *
+ * O ponto importante: criar essa LP foi LITERALMENTE copiar a fia01
+ * e mudar os textos. Não houve recriação de header, footer, estilos,
+ * estrutura do hero, estrutura do pricing — nada disso.
+ *
+ * DEMONSTRAÇÃO DA ISLANDS ARCHITECTURE
+ * ------------------------------------
+ * Esta página importa o componente Countdown, que tem um <script>.
+ * Como consequência:
+ *   - O JS do countdown é bundleado e adicionado a ESTA página.
+ *   - A fia01.astro, que não usa Countdown, fica com ZERO JS.
+ *
+ * É a "Islands Architecture" funcionando na prática: você só paga
+ * pelo JavaScript que efetivamente usa, página por página.
+ *
+ * GERAÇÃO DE LPs POR IA, NA PRÁTICA
+ * ---------------------------------
+ * O fluxo passa a ser:
+ *   1. Engenheiro/marketing descreve a LP nova em texto.
+ *   2. IA (Cursor/Claude) lê a pasta `components/blocks/` e este
+ *      arquivo como exemplo.
+ *   3. IA escreve um novo arquivo `.astro` compondo os blocos certos
+ *      com os textos certos.
+ *   4. Build. Deploy. Pronto.
+ *
+ * Isso é incomparavelmente mais rápido do que o ciclo Elementor.
+ * ========================================================================== */
+
+import LPLayout from '../../layouts/LPLayout.astro';
+import Hero from '../../components/blocks/Hero.astro';
+import Countdown from '../../components/islands/Countdown.astro';
+import Stats from '../../components/blocks/Stats.astro';
+import Pricing from '../../components/blocks/Pricing.astro';
+import FAQAccordion from '../../components/islands/FAQAccordion.astro';
+
+const ofertaTerminaEm = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+---
+
+<LPLayout
+  title="FIA 02 - Turma Avançada | Asimov Academy"
+  description="Turma avançada da Formação em IA: RAG, Agentes e LLMs em produção."
+>
+  <Hero
+    dominio="fia"
+    titulo="Turma Avançada de IA"
+    subtitulo="Para quem já programa em Python e quer dominar RAG, Agentes e LLMs em produção"
+    ctaTexto="Garantir minha vaga"
+  />
+
+  <Countdown ateISO={ofertaTerminaEm} rotulo="Inscrições encerram em:" />
+
+  <Stats dominio="fia" titulo="Junte-se à maior comunidade de IA do Brasil" />
+
+  <Pricing
+    dominio="fia"
+    plano="Turma Avançada 2026"
+    preco="R$ 2.497"
+    parcelas="ou 12x de R$ 249,70"
+    beneficios={[
+      'Módulos exclusivos de RAG e Agentes',
+      'Code review individual nos projetos',
+      'Mentorias 1:1 com especialistas',
+      'Acesso vitalício + atualizações',
+    ]}
+    ctaTexto="Quero a turma avançada"
+  />
+
+  <FAQAccordion
+    perguntas={[
+      { q: 'Qual o pré-requisito?', a: 'Ter concluído a FIA 01 ou ter experiência equivalente com Python e ML.' },
+      { q: 'Quantas vagas?', a: 'Turma limitada a 100 alunos para garantir qualidade das mentorias.' },
+      { q: 'Posso parcelar?', a: 'Sim, em até 12x no cartão de crédito sem juros.' },
+    ]}
+  />
+</LPLayout>

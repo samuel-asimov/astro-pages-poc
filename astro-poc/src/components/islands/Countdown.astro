@@ -1,0 +1,147 @@
+---
+/* ============================================================================
+ * src/components/islands/Countdown.astro — CONTADOR REGRESSIVO (JS SOB DEMANDA)
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * Algumas LPs precisam de interatividade real que SÓ pode ser feita
+ * com JavaScript — countdowns, carrosséis, formulários complexos,
+ * calculadoras de ROI, etc.
+ *
+ * O receio legítimo de quem vem do HTML puro é: "se eu adotar um
+ * framework, todo o framework vai ser carregado em todas as páginas,
+ * mesmo as que não precisam de JS, e isso vai matar a performance".
+ *
+ * COMO O ASTRO RESOLVE — A FILOSOFIA DAS "ILHAS"
+ * ----------------------------------------------
+ * Este componente tem um bloco <script>. O Astro processa esse script
+ * em build time (bundle, minificação, tree-shaking) e o inclui APENAS
+ * nas páginas que importam este componente.
+ *
+ * Verificação prática nesta POC:
+ *   - fia01.astro NÃO usa Countdown → dist/fia/fia01/index.html tem
+ *     ZERO bytes de JavaScript.
+ *   - fia02.astro USA Countdown → dist/fia/fia02/index.html carrega
+ *     o JS especificamente do Countdown e nada mais.
+ *
+ * Isso é a "Islands Architecture": a página é majoritariamente HTML
+ * estático, e a interatividade aparece em "ilhas" isoladas. Cada ilha
+ * é responsável por carregar SEU JS, e só onde precisa.
+ *
+ * COMPARAÇÃO COM SPA TRADICIONAL
+ * ------------------------------
+ *   - SPA típico: ~150 KB de JS no carregamento inicial, mesmo que
+ *     a página seja 100% estática.
+ *   - Astro com este Countdown: alguns poucos KB de JS, só na página
+ *     que tem countdown. As outras LPs ficam com zero JS.
+ *
+ * Para LPs (onde performance impacta diretamente conversão), essa
+ * diferença é gigantesca.
+ *
+ * SOBRE AS DIRETIVAS client:* DO ASTRO
+ * ------------------------------------
+ * Quando usamos componentes React/Vue/Svelte dentro do Astro,
+ * controlamos QUANDO o JS é carregado com diretivas:
+ *
+ *   client:load     → hidrata assim que a página carrega
+ *   client:idle     → hidrata quando o browser estiver ocioso
+ *   client:visible  → hidrata só quando o componente entra na viewport
+ *   client:media    → hidrata só se um media query bater
+ *   client:only     → não renderiza no servidor, só no cliente
+ *
+ * Para este Countdown específico, como ele é um componente Astro nativo
+ * (não React), o <script> abaixo já é tratado como módulo bundleado
+ * automaticamente, sem precisar de diretiva. Mas se ele fosse um
+ * componente React, escreveríamos:
+ *
+ *   <Countdown client:visible ateISO={...} />
+ *
+ * e o JS dele só seria baixado e executado quando o usuário rolasse
+ * até ele — economizando tráfego e melhorando o LCP.
+ * ========================================================================== */
+
+interface Props {
+  ateISO: string;
+  rotulo?: string;
+}
+
+const { ateISO, rotulo = 'Oferta termina em:' } = Astro.props;
+---
+
+<div class="countdown" data-ate={ateISO}>
+  <span class="rotulo">{rotulo}</span>
+  <div class="cells">
+    <div><span class="num" data-cell="d">--</span><span class="lbl">dias</span></div>
+    <div><span class="num" data-cell="h">--</span><span class="lbl">horas</span></div>
+    <div><span class="num" data-cell="m">--</span><span class="lbl">min</span></div>
+    <div><span class="num" data-cell="s">--</span><span class="lbl">seg</span></div>
+  </div>
+</div>
+
+<script>
+  /*
+   * Astro bundla este script e o injeta APENAS nas páginas que importam
+   * o componente Countdown. Páginas que não têm countdown nem sabem que
+   * este código existe.
+   */
+  document.querySelectorAll<HTMLElement>('.countdown').forEach((root) => {
+    const ate = new Date(root.dataset.ate!).getTime();
+    const cells = {
+      d: root.querySelector<HTMLElement>('[data-cell="d"]')!,
+      h: root.querySelector<HTMLElement>('[data-cell="h"]')!,
+      m: root.querySelector<HTMLElement>('[data-cell="m"]')!,
+      s: root.querySelector<HTMLElement>('[data-cell="s"]')!,
+    };
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const tick = () => {
+      const diff = Math.max(0, ate - Date.now());
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      cells.d.textContent = pad(d);
+      cells.h.textContent = pad(h);
+      cells.m.textContent = pad(m);
+      cells.s.textContent = pad(s);
+    };
+    tick();
+    setInterval(tick, 1000);
+  });
+</script>
+
+<style>
+  .countdown {
+    background: #fff3cd;
+    padding: 20px;
+    text-align: center;
+    border-top: 3px solid #ffb703;
+    border-bottom: 3px solid #ffb703;
+  }
+  .rotulo {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #856404;
+  }
+  .cells {
+    display: inline-flex;
+    gap: 16px;
+  }
+  .cells > div {
+    min-width: 64px;
+  }
+  .num {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+    color: #0a0a0a;
+    font-variant-numeric: tabular-nums;
+  }
+  .lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #856404;
+    letter-spacing: 0.05em;
+  }
+</style>

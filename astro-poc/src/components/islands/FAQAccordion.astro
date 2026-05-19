@@ -1,0 +1,103 @@
+---
+/* ============================================================================
+ * src/components/islands/FAQAccordion.astro — FAQ COM HTML NATIVO
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * FAQ é onipresente em LP. A solução típica em sites com framework é
+ * implementar um accordion com JavaScript: clique abre/fecha, estado
+ * gerenciado por React/Vue, alguns KB de JS no bundle.
+ *
+ * Mas para um simples "abre e fecha" de FAQ, ESSE JS É DESPERDÍCIO.
+ * O HTML nativo já oferece <details>/<summary> que faz exatamente
+ * isso, sem uma única linha de JS.
+ *
+ * DEMONSTRAÇÃO DA FILOSOFIA DO ASTRO
+ * ----------------------------------
+ * Este componente está na pasta `islands/` por convenção, mas na
+ * prática ele NÃO é uma ilha — porque não precisa ser. É 100% HTML
+ * estático. Zero KB de JS são adicionados à página por causa dele.
+ *
+ * Esse é o "espírito" do Astro: **só pague o custo de JavaScript
+ * quando realmente houver interatividade que exija JS**. Para tudo
+ * que dá pra fazer com HTML/CSS nativo, faça com HTML/CSS nativo.
+ *
+ * COMPARAÇÃO COM A ABORDAGEM SPA
+ * ------------------------------
+ * Em um Next.js/Remix tradicional, mesmo um FAQ "burro" como este
+ * acabaria virando um componente React que ocupa lugar no bundle.
+ * No Astro, ele é literalmente HTML — e a página inteira que o usa
+ * (veja `pages/fia/fia01.astro`) sai do build com ZERO bytes de JS.
+ *
+ * O TRUQUE DO `name="faq"`
+ * ------------------------
+ * Quando vários <details> compartilham o mesmo `name`, o navegador
+ * fecha automaticamente os outros ao abrir um. Isso reproduz o
+ * comportamento "só um aberto por vez" de um accordion JS — sem JS.
+ * (Suporte do browser: padrão em todos os modernos.)
+ * ========================================================================== */
+
+interface Props {
+  perguntas: Array<{ q: string; a: string }>;
+}
+
+const { perguntas } = Astro.props;
+---
+
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-list">
+      {perguntas.map((item, i) => (
+        <details name="faq" open={i === 0}>
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    padding: 64px 0;
+    background: var(--color-surface);
+  }
+  .faq h2 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+  .faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  details {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    list-style: none;
+  }
+  summary::after {
+    content: '+';
+    float: right;
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after {
+    content: '−';
+  }
+  details p {
+    margin-top: 12px;
+    color: var(--color-muted);
+  }
+</style>
