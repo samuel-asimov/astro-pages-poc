@@ -120,9 +120,6 @@ parallax, 3D. Esse tipo de recurso pesa, mas o **Islands Architecture**
 do Astro resolve: o peso fica isolado na LP que usa, sem contaminar as
 outras.
 
-> Quanto mais exuberante o design, mais o modelo "estático + ilhas
-> pesadas onde precisa" se paga em relação a SPAs tradicionais.
-
 ### O que vem nativo
 
 - **CSS escopado por componente** (sem conflito de classes)
