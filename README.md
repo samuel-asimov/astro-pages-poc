@@ -1,4 +1,4 @@
-# POC — Landing Pages da Asimov Academy com Astro
+# Landing Pages da Asimov Academy com Astro
 
 > **Tese:** o framework [Astro](https://astro.build) resolve o problema de
 > escalar landing pages estáticas sem os problemas de manutenção do
