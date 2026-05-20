@@ -111,6 +111,80 @@ abaixo para entender a arquitetura completa.
     arquivo da página vira praticamente uma "lista de compras" de
     blocos.
 
+## Como o Astro trata o design
+
+LPs da Asimov costumam ter design exuberante — scroll animations,
+parallax, 3D. Esse tipo de recurso pesa, mas o **Islands Architecture**
+do Astro resolve: o peso fica isolado na LP que usa, sem contaminar as
+outras.
+
+> Quanto mais exuberante o design, mais o modelo "estático + ilhas
+> pesadas onde precisa" se paga em relação a SPAs tradicionais.
+
+### O que vem nativo
+
+- **CSS escopado por componente** (sem conflito de classes)
+- **CSS global + variáveis** para design tokens
+- **`<Image />`** com otimização automática (WebP/AVIF, lazy load, responsivo)
+- **`<ClientRouter />`** para transições suaves entre páginas
+
+### Como adicionar ferramentas: `astro add`
+
+Um único comando instala e configura:
+
+```bash
+npx astro add tailwind
+npx astro add react       # necessário para ilhas R3F, Motion, shadcn
+```
+
+### Catálogo recomendado para LPs
+
+| Categoria | Ferramenta | Para que serve |
+|---|---|---|
+| **Estilização** | [Tailwind CSS](https://tailwindcss.com) | Utility-first, acelera muito + funciona bem com IA |
+| **Fontes** | [@fontsource/*](https://fontsource.org) | Self-host (sem Google Fonts, melhor performance e LGPD) |
+| **Ícones** | [astro-icon](https://github.com/natemoo-re/astro-icon) | 200 mil+ ícones SVG tree-shaken |
+| **Scroll animations** | [GSAP + ScrollTrigger](https://gsap.com) | Padrão-ouro: pin, parallax, timelines complexas |
+| **Smooth scroll** | [Lenis](https://lenis.darkroom.engineering) | Aquela rolagem "manteiga" típica de site premium |
+| **3D drag-and-drop** | [Spline](https://spline.design) | Designer modela a cena, dev só embeda |
+| **3D programado** | [React Three Fiber](https://r3f.docs.pmnd.rs) | Three.js declarativo em JSX, dentro de ilha React |
+| **Background WebGL** | [Vanta.js](https://www.vantajs.com) | Backgrounds animados plug-and-play (waves, nuvens) |
+| **Animações vetoriais** | [Lottie](https://lottiefiles.com) / [Rive](https://rive.app) | Animações do After Effects ou interativas |
+| **Componentes prontos** | [shadcn/ui](https://ui.shadcn.com) / [DaisyUI](https://daisyui.com) | Acelera blocos novos com qualidade |
+
+### Exemplo: GSAP isolado numa ilha
+
+```astro
+---
+// src/components/islands/HeroAnimado.astro
+---
+<section class="hero-animado">
+  <h1>Headline grande</h1>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('.hero-animado h1', {
+    y: 100, opacity: 0, duration: 1,
+    scrollTrigger: '.hero-animado',
+  });
+</script>
+```
+
+O JS do GSAP só vai pra LPs que usam `HeroAnimado`. As LPs simples
+continuam zerinhas de JavaScript.
+
+### Por onde começar
+
+1. **Tailwind CSS** — base de estilização
+2. **GSAP + Lenis** — duo padrão de scroll animations
+3. **astro-icon** + **@fontsource/inter** — ícones e fontes leves
+4. **Spline** quando aparecer a primeira cena 3D
+5. **shadcn/ui** se quiser acelerar com componentes prontos
+
 ## Pré-requisitos
 
 Só uma coisa: **Node.js 18.17.1 ou superior** (recomendamos a LTS
