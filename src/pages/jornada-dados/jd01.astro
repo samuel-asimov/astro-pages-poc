@@ -1,0 +1,90 @@
+---
+/* ============================================================================
+ * src/pages/jornada-dados/jd01.astro → URL: lp.asimov.academy/jornada-dados/jd01
+ * ============================================================================
+ *
+ * UM SEGUNDO DOMÍNIO, REUTILIZANDO TUDO
+ *
+ * Esta página é de outro PRODUTO (Jornada de Dados, não FIA), com
+ * outro branding (azul-petróleo + amarelo, em vez de azul-marinho +
+ * verde).
+ *
+ * Apesar de ser visualmente diferente, esta página usa EXATAMENTE os
+ * mesmos componentes da fia01. Só muda uma coisa:
+ *
+ *      dominio="jornada-dados"        em vez de       dominio="fia"
+ *
+ * Essa única prop faz com que o Hero pinte o gradient com a cor
+ * petróleo, o CTA fique amarelo, o tagline do Stats vire "A maior
+ * comunidade de Dados do Brasil" e os números do Stats apareçam na
+ * cor primária do domínio.
+ *
+ * POR QUE ISSO IMPORTA
+ * --------------------
+ * Adicionar um terceiro, quarto, décimo domínio não exige criar
+ * componentes novos. O custo marginal de cada novo domínio é:
+ *
+ *   1. Uma entrada em `src/data/dominios.ts` (cores + tagline).
+ *   2. Uma pasta nova em `src/pages/<novo-dominio>/`.
+ *   3. Páginas nessa pasta usando `dominio="<novo-dominio>"`.
+ *
+ * Nada de copiar/colar componentes. Nada de inconsistência visual.
+ * O design system carrega o peso, e cada LP fica enxuta.
+ *
+ * RESUMO DA TESE
+ * --------------
+ * O modelo "pasta = domínio, arquivo = página" que você desenhou
+ * está correto. Astro materializa esse modelo (via file-based
+ * routing) E resolve, com componentes/layouts/dados centralizados,
+ * todos os problemas de duplicação que o HTML puro reintroduziria.
+ *
+ * O output é HTML estático puro, então a performance percebida pelo
+ * usuário final é idêntica à de um site HTML puro — sem o custo de
+ * manutenção do HTML puro.
+ *
+ * Ganha-se em produtividade, consistência e parceria com IA, sem
+ * perder em performance. É o melhor dos dois mundos.
+ * ========================================================================== */
+
+import LPLayout from '../../layouts/LPLayout.astro';
+import Hero from '../../components/blocks/Hero.astro';
+import Stats from '../../components/blocks/Stats.astro';
+import Pricing from '../../components/blocks/Pricing.astro';
+import FAQAccordion from '../../components/islands/FAQAccordion.astro';
+---
+
+<LPLayout
+  title="Jornada de Dados | Asimov Academy"
+  description="Aprenda análise de dados com Python, Pandas e visualização em projetos reais."
+>
+  <Hero
+    dominio="jornada-dados"
+    titulo="Jornada de Dados"
+    subtitulo="Do zero ao primeiro emprego como analista de dados com Python e Pandas"
+    ctaTexto="Começar agora"
+  />
+
+  <Stats dominio="jornada-dados" />
+
+  <Pricing
+    dominio="jornada-dados"
+    plano="Jornada Completa"
+    preco="R$ 997"
+    parcelas="ou 12x de R$ 99,70"
+    beneficios={[
+      'Python para análise de dados',
+      'Pandas, NumPy e Matplotlib',
+      'Projetos reais de portfólio',
+      'Acesso vitalício',
+    ]}
+    ctaTexto="Quero começar a jornada"
+  />
+
+  <FAQAccordion
+    perguntas={[
+      { q: 'Funciona para quem nunca programou?', a: 'Sim, começamos do zero absoluto em Python.' },
+      { q: 'Vou conseguir emprego?', a: 'Te ajudamos com portfólio e LinkedIn, mas o emprego depende de você.' },
+      { q: 'Preciso de computador potente?', a: 'Não, qualquer notebook dos últimos 5 anos roda tranquilo.' },
+    ]}
+  />
+</LPLayout>

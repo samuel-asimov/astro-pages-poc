@@ -1,0 +1,111 @@
+---
+/* ============================================================================
+ * src/components/blocks/Pricing.astro — BLOCO DE OFERTA / PREÇO
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * Toda LP tem (ou deveria ter) um bloco de preço/oferta com a mesma
+ * estrutura visual: nome do plano, preço grande, parcelamento, lista
+ * de benefícios, CTA. O que MUDA entre LPs é o conteúdo (valores,
+ * benefícios, nome da turma), não a estrutura.
+ *
+ * Em HTML puro, refazer essa estrutura toda vez é trabalho mecânico
+ * + risco de inconsistência visual sutil.
+ *
+ * COMO O ASTRO RESOLVE — DIFERENTE DOS BLOCOS ANTERIORES
+ * ------------------------------------------------------
+ * Diferente do Stats (cujos dados vêm de uma fonte global), o Pricing
+ * tem dados PRÓPRIOS de cada LP. Por isso ele recebe tudo por props:
+ *
+ *   - plano (string)
+ *   - preco (string)
+ *   - parcelas (string, opcional)
+ *   - beneficios (array de strings)
+ *   - ctaTexto (string)
+ *
+ * Isso é uma decisão de design importante: nem todo dado precisa estar
+ * na fonte única. A regra é: se o dado é GLOBAL e usado em vários
+ * lugares, vai pra `data/`. Se é específico de uma LP, vem por prop.
+ *
+ * VANTAGEM PRÁTICA PARA IA
+ * ------------------------
+ * A interface deste componente (a `interface Props`) funciona como
+ * uma "documentação executável" para a IA. Quando pedimos "cria uma LP
+ * nova usando Pricing", a IA olha as Props e sabe exatamente quais
+ * campos precisa preencher. Tipagem = contrato = menos erro.
+ * ========================================================================== */
+
+import CTAButton from '../ui/CTAButton.astro';
+import { dominios, type DominioId } from '../../data/dominios.ts';
+
+interface Props {
+  dominio: DominioId;
+  plano: string;
+  preco: string;
+  parcelas?: string;
+  beneficios: string[];
+  ctaTexto: string;
+}
+
+const { dominio, plano, preco, parcelas, beneficios, ctaTexto } = Astro.props;
+const d = dominios[dominio];
+---
+
+<section class="pricing" id="inscricao">
+  <div class="container">
+    <div class="pricing-card" style={`border-color:${d.corCta}`}>
+      <div class="plano">{plano}</div>
+      <div class="preco">{preco}</div>
+      {parcelas && <div class="parcelas">{parcelas}</div>}
+      <ul class="beneficios">
+        {beneficios.map((b) => <li>✓ {b}</li>)}
+      </ul>
+      <CTAButton href="#checkout" bg={d.corCta} color={d.corCtaTexto}>
+        {ctaTexto}
+      </CTAButton>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    padding: 64px 0;
+    background: #fff;
+  }
+  .pricing-card {
+    max-width: 480px;
+    margin: 0 auto;
+    border: 3px solid;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  }
+  .plano {
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+  .preco {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin: 8px 0;
+  }
+  .parcelas {
+    color: var(--color-muted);
+    margin-bottom: 16px;
+  }
+  .beneficios {
+    list-style: none;
+    text-align: left;
+    margin: 24px 0;
+    padding: 0;
+  }
+  .beneficios li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+</style>

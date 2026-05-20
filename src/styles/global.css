@@ -1,0 +1,54 @@
+/* ============================================================================
+ * src/styles/global.css — RESET E DESIGN TOKENS GLOBAIS
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * No modelo de "tudo em um index.html", o CSS de reset (box-sizing, margens
+ * zeradas) e as variáveis de design (cores, fontes, larguras) precisam ser
+ * copiados e colados em CADA arquivo HTML. Quando o design system evolui
+ * — por exemplo, mudamos a fonte padrão ou ajustamos a largura do
+ * container — temos que abrir N arquivos e fazer a mesma edição.
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Este arquivo é importado UMA vez no LPLayout. Como o LPLayout envolve
+ * todas as páginas, esses tokens ficam disponíveis em todas as LPs.
+ *
+ * Não é mágica do Astro especificamente — é o jeito normal de organizar
+ * CSS com qualquer bundler. A novidade aqui em relação ao HTML puro é
+ * que o Astro:
+ *   1. Faz o bundling/minificação automaticamente (vê o tamanho final
+ *      do <style> inline nas páginas geradas em dist/).
+ *   2. Faz tree-shaking de CSS órfão.
+ *   3. Permite que estilos de componentes (em <style> dentro dos .astro)
+ *      sejam ESCOPADOS automaticamente, sem vazar para outros componentes.
+ * ========================================================================== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #666;
+  --color-dark: #0a0a0a;
+  --color-surface: #f5f5f7;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --container-width: 1100px;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  line-height: 1.6;
+  background: var(--color-bg);
+}
+
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a { color: inherit; }
+img { max-width: 100%; display: block; }

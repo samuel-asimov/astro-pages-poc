@@ -1,0 +1,43 @@
+---
+/* ============================================================================
+ * src/components/blocks/Footer.astro — FOOTER GLOBAL
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * Mesmo raciocínio do Header: footer com copyright, ano corrente,
+ * número de alunos, links institucionais — coisas que precisam ser
+ * idênticas em todas as LPs.
+ *
+ * Em HTML puro, ano novo? Tem que ir em N arquivos atualizar o "2025"
+ * para "2026". Aqui, basta atualizar `site.anoAtual` em
+ * `src/data/site.ts` (ou tornar dinâmico com `new Date().getFullYear()`).
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Componente reutilizável renderizado pelo LPLayout. Ano, nome da marca
+ * e número de alunos vêm da fonte única. Não tem como esses dados
+ * ficarem desincronizados entre as LPs.
+ * ========================================================================== */
+
+import { site } from '../../data/site.ts';
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <p>
+      © {site.anoAtual} {site.marca}. Todos os direitos reservados.
+      | +{site.alunosFormados.toLocaleString('pt-BR')} alunos formados
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-dark);
+    color: #aaa;
+    padding: 32px 0;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+/* ============================================================================
+ * src/components/blocks/Header.astro — HEADER GLOBAL
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * O <header> de uma LP costuma conter:
+ *   - Logo da marca
+ *   - Badge com "+15.000 alunos formados" (dado institucional)
+ *   - Menu de navegação
+ *
+ * Em HTML puro, esse mesmo <header> precisa ser duplicado em CADA
+ * arquivo. Pior: como o badge tem um número que muda com o tempo, a
+ * duplicação garante que mais cedo ou mais tarde uma página vai estar
+ * mostrando "+15.000" e outra "+12.000" — perdemos credibilidade.
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Este componente é importado UMA vez pelo LPLayout. Como o LPLayout
+ * embrulha todas as LPs, este Header aparece automaticamente em todas
+ * elas, sempre com o conteúdo mais atualizado.
+ *
+ * E mais: o número do badge não está hardcoded aqui. Ele vem de
+ * `src/data/site.ts` (fonte única de verdade). Mudar o número de
+ * alunos em todo o site = editar 1 linha em 1 arquivo.
+ *
+ * SOBRE O <style> ESCOPADO
+ * ------------------------
+ * O <style> aqui em baixo é AUTOMATICAMENTE escopado pelo Astro: ele
+ * só se aplica aos elementos DENTRO deste componente. Isso significa
+ * que podemos ter uma classe ".logo" aqui e outra ".logo" em outro
+ * componente sem conflito — algo impossível em HTML puro sem disciplina
+ * manual de namespacing (BEM, etc.).
+ *
+ * Como Astro faz isso? Em build time, ele adiciona um atributo
+ * `data-astro-cid-XXX` em cada elemento e escopa o CSS com esse
+ * seletor. Quem inspeciona o HTML final vê isso.
+ * ========================================================================== */
+
+import { site, nav } from '../../data/site.ts';
+---
+
+<header class="site-header">
+  <div class="container">
+    <div class="logo">
+      {site.marca}
+      <span class="badge-alunos">
+        +{site.alunosFormados.toLocaleString('pt-BR')} alunos formados
+      </span>
+    </div>
+    <nav>
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-dark);
+    color: #fff;
+    padding: 16px 0;
+  }
+  .site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .badge-alunos {
+    background: #00d97e;
+    color: #0a0a0a;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 12px;
+  }
+  nav a {
+    color: #fff;
+    margin-left: 20px;
+    text-decoration: none;
+  }
+  nav a:hover {
+    opacity: 0.8;
+  }
+</style>

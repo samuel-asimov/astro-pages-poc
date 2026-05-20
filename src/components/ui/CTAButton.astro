@@ -1,0 +1,60 @@
+---
+/* ============================================================================
+ * src/components/ui/CTAButton.astro — BOTÃO DE CALL-TO-ACTION
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * O botão de CTA é o elemento mais importante de uma LP (é o que
+ * converte). Em HTML puro, ele é replicado dezenas de vezes — no Hero,
+ * no Pricing, em meio à página, no final. Quando o time de design
+ * decide mudar o padding, o border-radius ou a sombra do hover, é
+ * preciso fazer um find-replace cirúrgico em todos os HTMLs.
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Componente "átomo" reutilizável. Toda a aparência (padding,
+ * border-radius, transição de hover) vive aqui. Cor de fundo e cor de
+ * texto vêm por props, porque mudam por domínio (FIA usa verde,
+ * Jornada de Dados usa amarelo).
+ *
+ * SOBRE <slot />
+ * --------------
+ * Note que o texto do botão não vem por prop, vem por <slot />. Isso é
+ * mais flexível: quem usa o componente pode colocar texto puro, ou um
+ * <span> com ícone + texto, ou o que for. É o equivalente a `children`
+ * no React.
+ *
+ *   <CTAButton href="..."><strong>Quero!</strong></CTAButton>
+ *                          ↑
+ *               isso vai virar <slot />
+ * ========================================================================== */
+
+interface Props {
+  href: string;
+  bg?: string;
+  color?: string;
+}
+
+const { href, bg = '#00d97e', color = '#0a0a0a' } = Astro.props;
+---
+
+<a href={href} class="cta-btn" style={`background:${bg};color:${color};`}>
+  <slot />
+</a>
+
+<style>
+  .cta-btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+</style>

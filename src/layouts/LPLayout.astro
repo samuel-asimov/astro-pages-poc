@@ -1,0 +1,82 @@
+---
+/* ============================================================================
+ * src/layouts/LPLayout.astro — LAYOUT BASE DE TODAS AS LANDING PAGES
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE
+ * ---------------------------------
+ * No modelo "tudo em index.html", cada página precisa repetir:
+ *
+ *   - <!DOCTYPE html>, <html lang>, <head> inteiro
+ *   - meta charset, meta viewport
+ *   - links de fonts, favicon
+ *   - scripts de tracking (Google Tag Manager, Meta Pixel, GA4)
+ *   - tags Open Graph para compartilhamento social
+ *   - <header> e <footer>
+ *
+ * Tudo isso é "infraestrutura de página" — não é o conteúdo da LP. Mas
+ * fica misturado com o conteúdo, e qualquer mudança (ex.: instalar um
+ * pixel novo) exige editar TODAS as páginas.
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * O conceito de "Layout" do Astro: um componente que define o esqueleto
+ * da página e usa <slot /> para receber o conteúdo específico de cada LP.
+ *
+ *   - Toda a infraestrutura mora aqui, em UM lugar.
+ *   - Cada página de LP fica curta e legível, só com o conteúdo dela.
+ *   - Adicionar um pixel novo = editar este arquivo, deploy uma vez,
+ *     todas as LPs já estão com o pixel.
+ *   - O <slot /> é onde o conteúdo de <LPLayout>...</LPLayout> aparece.
+ *
+ * SOBRE AS PROPS
+ * --------------
+ * Title e description são por LP (são metadados específicos de cada
+ * página), então recebemos via `Astro.props`. O resto é compartilhado.
+ *
+ * EVOLUÇÃO NATURAL
+ * ----------------
+ * Quando precisarmos de variações (ex.: layout sem header para uma LP
+ * de checkout), criamos NovoLayout.astro que importa LPLayout ou que é
+ * uma variação dele. Layouts compõem.
+ * ========================================================================== */
+
+import Header from '../components/blocks/Header.astro';
+import Footer from '../components/blocks/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    {/*
+      Quando instalarmos GTM, Meta Pixel, GA4, fontes do Google etc.,
+      eles entram aqui e ficam disponíveis em todas as LPs sem que
+      precisemos editar cada página.
+    */}
+  </head>
+  <body>
+    <Header />
+    <main>
+      {/*
+        <slot /> é onde o conteúdo de cada LP aparece. Veja
+        src/pages/fia/fia01.astro: o que está entre <LPLayout>...</LPLayout>
+        é exatamente o que entra aqui no build final.
+      */}
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

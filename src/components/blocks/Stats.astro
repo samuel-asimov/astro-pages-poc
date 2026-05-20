@@ -1,0 +1,111 @@
+---
+/* ============================================================================
+ * src/components/blocks/Stats.astro — BLOCO DE PROVA SOCIAL (NÚMEROS)
+ * ============================================================================
+ *
+ * PROBLEMA QUE ESTE ARQUIVO RESOLVE — O CASO MAIS GRITANTE
+ * --------------------------------------------------------
+ * Este bloco é a personificação do problema que você descreveu. Ele
+ * mostra "+15.000 alunos formados", "42 cursos disponíveis", "4.9/5
+ * avaliação média".
+ *
+ * Esses três números:
+ *   1. Aparecem em CADA LP de cada produto.
+ *   2. Mudam constantemente (alunos sobem, cursos novos lançam,
+ *      avaliação flutua).
+ *   3. PRECISAM ser idênticos em todas as páginas, sob pena de a
+ *      empresa perder credibilidade ("o site diz X mas a propaganda diz Y").
+ *
+ * No modelo de HTML puro, é praticamente garantido que esses números
+ * vão ficar desincronizados — basta um colaborador atualizar uma
+ * página e esquecer das outras.
+ *
+ * COMO O ASTRO RESOLVE
+ * --------------------
+ * Este componente NÃO recebe os números por prop. Ele os IMPORTA da
+ * fonte única (`src/data/site.ts`). A página que usa <Stats /> nem
+ * precisa saber quantos alunos a empresa tem — esse é um dado global,
+ * não um dado da LP.
+ *
+ * Resultado prático: alteramos UMA linha em `site.ts`, todas as LPs
+ * de todos os domínios passam a mostrar o número novo no próximo build.
+ * Não existe a possibilidade de uma LP estar desatualizada em relação
+ * a outra. O bug é arquiteturalmente impossível.
+ *
+ * O QUE VEM POR PROP
+ * ------------------
+ * Apenas o que faz sentido variar por LP:
+ *   - `dominio`: para aplicar a cor primária correta nos números
+ *   - `titulo`: opcional, para customizar a chamada (cada LP pode ter
+ *     um framing diferente da prova social — "A maior comunidade de IA"
+ *     vs. "Junte-se a quem já transformou sua carreira")
+ * ========================================================================== */
+
+import { site } from '../../data/site.ts';
+import { dominios, type DominioId } from '../../data/dominios.ts';
+
+interface Props {
+  dominio: DominioId;
+  titulo?: string;
+}
+
+const { dominio, titulo } = Astro.props;
+const d = dominios[dominio];
+const tituloFinal = titulo ?? d.tagline;
+---
+
+<section class="stats">
+  <div class="container">
+    <h2>{tituloFinal}</h2>
+    <div class="stats-grid">
+      <div>
+        <div class="stat-number" style={`color:${d.corPrimaria}`}>
+          +{site.alunosFormados.toLocaleString('pt-BR')}
+        </div>
+        <div class="stat-label">Alunos formados</div>
+      </div>
+      <div>
+        <div class="stat-number" style={`color:${d.corPrimaria}`}>
+          {site.cursosDisponiveis}
+        </div>
+        <div class="stat-label">Cursos disponíveis</div>
+      </div>
+      <div>
+        <div class="stat-number" style={`color:${d.corPrimaria}`}>
+          {site.avaliacaoMedia}
+        </div>
+        <div class="stat-label">Avaliação média</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stats {
+    padding: 64px 0;
+    background: var(--color-surface);
+    text-align: center;
+  }
+  .stats h2 {
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .stat-number {
+    font-size: 48px;
+    font-weight: 800;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  @media (max-width: 720px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>
