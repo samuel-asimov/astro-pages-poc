@@ -30,7 +30,9 @@
  * -----------------
  * O Hero compõe o CTAButton em vez de reimplementar um <a> estilizado.
  * Isso é COMPOSIÇÃO DE COMPONENTES: blocos grandes são feitos de blocos
- * menores. É o oposto do Elementor, onde cada bloco é uma caixa fechada.
+ * menores. No HTML puro, cada <a> estilizado em cada página é uma
+ * cópia independente — qualquer mudança no padrão visual do botão
+ * exige editar todas as cópias.
  * ========================================================================== */
 
 import CTAButton from '../ui/CTAButton.astro';

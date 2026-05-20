@@ -15,8 +15,8 @@
  *
  * Quando esse número muda (e ele muda toda hora), é praticamente garantido
  * que alguém vai esquecer de atualizar uma das ocorrências, e o site vai
- * ficar mostrando "+15.000" em uma página e "+12.000" em outra. Já vimos
- * isso acontecer no Elementor, e aconteceria igual no HTML puro.
+ * ficar mostrando "+15.000" em uma página e "+12.000" em outra — risco
+ * real que existe hoje no nosso modelo de HTML puro replicado.
  *
  * COMO O ASTRO RESOLVE
  * --------------------

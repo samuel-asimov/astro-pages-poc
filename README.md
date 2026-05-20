@@ -1,14 +1,16 @@
 # POC — Landing Pages da Asimov Academy com Astro
 
 > **Tese:** o framework [Astro](https://astro.build) resolve o problema de
-> escalar landing pages estáticas sem reintroduzir os problemas de
-> manutenção do nosso modelo atual (Elementor / HTML puro duplicado).
+> escalar landing pages estáticas sem os problemas de manutenção do
+> modelo atual (HTML puro duplicado por página).
 
 ## O problema que queremos resolver
 
-Hoje as nossas LPs são feitas no Elementor. Queremos migrar para um
-repositório versionado, escrito em código, onde a IA possa gerar e
-editar páginas com facilidade. O modelo ingênuo seria:
+Hoje as nossas LPs são feitas em HTML/CSS/JavaScript puro, com cada
+página vivendo isoladamente em seu próprio `index.html`. Queremos
+manter essa simplicidade e leveza, mas resolver o problema de
+duplicação e falta de reuso entre as páginas. O modelo de pastas
+atual é mais ou menos assim:
 
 ```
 lp-asimov/
@@ -20,8 +22,8 @@ lp-asimov/
 ```
 
 Pasta = domínio, arquivo = página, URL gerada automaticamente. Esse
-modelo mental está **correto**, mas com HTML puro ele recria o mesmo
-problema do Elementor por outro caminho:
+modelo mental está **correto**, mas o HTML puro cria problemas de
+manutenção sérios à medida que o número de LPs cresce:
 
 1. **CSS duplicado** em todas as páginas (qualquer mudança de design
    precisa ser refeita N vezes).
