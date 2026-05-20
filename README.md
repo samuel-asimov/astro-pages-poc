@@ -56,7 +56,7 @@ puro.
 ## Como esta POC está organizada
 
 ```
-astro-poc/
+.
 ├── src/
 │   ├── data/                     ← FONTE ÚNICA DE VERDADE
 │   │   ├── site.ts               ← Nº de alunos, cursos, etc.
@@ -84,31 +84,31 @@ abaixo para entender a arquitetura completa.
 
 ## Roteiro de leitura (a tese, em ordem)
 
-1. [`astro-poc/src/data/site.ts`](./astro-poc/src/data/site.ts) — a
-   fonte única de verdade que elimina a duplicação de dados.
-2. [`astro-poc/src/data/dominios.ts`](./astro-poc/src/data/dominios.ts)
-   — como modelar múltiplos "domínios" (FIA, Jornada de Dados) com
-   branding próprio sem duplicar código.
-3. [`astro-poc/src/styles/global.css`](./astro-poc/src/styles/global.css)
-   — reset e design tokens em **um único lugar**.
-4. [`astro-poc/src/layouts/LPLayout.astro`](./astro-poc/src/layouts/LPLayout.astro)
-   — o esqueleto HTML compartilhado por todas as LPs.
-5. [`astro-poc/src/components/blocks/Header.astro`](./astro-poc/src/components/blocks/Header.astro)
-   e [`Footer.astro`](./astro-poc/src/components/blocks/Footer.astro)
-   — componentes globais que leem da fonte única.
-6. [`astro-poc/src/components/ui/CTAButton.astro`](./astro-poc/src/components/ui/CTAButton.astro)
+1. [`src/data/site.ts`](./src/data/site.ts) — a fonte única de verdade
+   que elimina a duplicação de dados.
+2. [`src/data/dominios.ts`](./src/data/dominios.ts) — como modelar
+   múltiplos "domínios" (FIA, Jornada de Dados) com branding próprio
+   sem duplicar código.
+3. [`src/styles/global.css`](./src/styles/global.css) — reset e design
+   tokens em **um único lugar**.
+4. [`src/layouts/LPLayout.astro`](./src/layouts/LPLayout.astro) — o
+   esqueleto HTML compartilhado por todas as LPs.
+5. [`src/components/blocks/Header.astro`](./src/components/blocks/Header.astro)
+   e [`Footer.astro`](./src/components/blocks/Footer.astro) —
+   componentes globais que leem da fonte única.
+6. [`src/components/ui/CTAButton.astro`](./src/components/ui/CTAButton.astro)
    — átomo reutilizável com parametrização via props.
-7. [`astro-poc/src/components/blocks/Hero.astro`](./astro-poc/src/components/blocks/Hero.astro),
-   [`Stats.astro`](./astro-poc/src/components/blocks/Stats.astro) e
-   [`Pricing.astro`](./astro-poc/src/components/blocks/Pricing.astro)
-   — blocos compostos que cada LP encaixa.
-8. [`astro-poc/src/components/islands/FAQAccordion.astro`](./astro-poc/src/components/islands/FAQAccordion.astro)
+7. [`src/components/blocks/Hero.astro`](./src/components/blocks/Hero.astro),
+   [`Stats.astro`](./src/components/blocks/Stats.astro) e
+   [`Pricing.astro`](./src/components/blocks/Pricing.astro) — blocos
+   compostos que cada LP encaixa.
+8. [`src/components/islands/FAQAccordion.astro`](./src/components/islands/FAQAccordion.astro)
    — interatividade com HTML nativo (zero JS).
-9. [`astro-poc/src/components/islands/Countdown.astro`](./astro-poc/src/components/islands/Countdown.astro)
+9. [`src/components/islands/Countdown.astro`](./src/components/islands/Countdown.astro)
    — Islands Architecture: JavaScript sob demanda.
-10. [`astro-poc/src/pages/fia/fia01.astro`](./astro-poc/src/pages/fia/fia01.astro),
-    [`fia02.astro`](./astro-poc/src/pages/fia/fia02.astro) e
-    [`jornada-dados/jd01.astro`](./astro-poc/src/pages/jornada-dados/jd01.astro)
+10. [`src/pages/fia/fia01.astro`](./src/pages/fia/fia01.astro),
+    [`fia02.astro`](./src/pages/fia/fia02.astro) e
+    [`jornada-dados/jd01.astro`](./src/pages/jornada-dados/jd01.astro)
     — três LPs reais, cada uma com 30-40 linhas, mostrando que o
     arquivo da página vira praticamente uma "lista de compras" de
     blocos.
@@ -223,10 +223,9 @@ colore os `.astro`, o que atrapalha bastante.
 
 ## Desenvolvimento local
 
-Depois de clonar o repositório:
+Depois de clonar o repositório, a partir da raiz:
 
 ```bash
-cd astro-poc
 npm install       # uma vez por repo (demora ~20-30s na primeira vez)
 npm run dev       # sobe servidor com hot reload
 ```
@@ -246,7 +245,6 @@ recarrega o navegador automaticamente.
 ## Build de produção (geração dos sites estáticos)
 
 ```bash
-cd astro-poc
 npm run build
 ```
 
@@ -255,7 +253,7 @@ Saída típica:
 ```
 [build] output: "static"
 [build] mode: "static"
-[build] directory: /workspace/astro-poc/dist/
+[build] directory: ./dist/
 
  generating static routes 
   ├─ /fia/fia01/index.html (+9ms) 
@@ -282,7 +280,7 @@ A pasta `dist/` final contém **HTML estático puro**, exatamente a
 estrutura de URLs que queremos:
 
 ```
-astro-poc/dist/
+dist/
 ├── index.html
 ├── fia/
 │   ├── fia01/index.html       ← ~8 KB, zero JavaScript
@@ -306,7 +304,6 @@ start dist\fia\fia01\index.html
 ## Preview da versão de produção
 
 ```bash
-cd astro-poc
 npm run preview
 ```
 
@@ -343,8 +340,6 @@ publica sozinho.
 2. Configure:
    - **Build command:** `npm run build`
    - **Build output directory:** `dist`
-   - **Root directory:** `astro-poc` (porque o projeto Astro vive
-     numa subpasta deste repo)
 3. Pronto. A partir daí o fluxo é:
    ```bash
    # edita arquivos .astro
@@ -388,7 +383,7 @@ exatamente o arquivo `dist/fia/fia01/index.html` que o Astro gerou.
 
 ## Resumo dos comandos
 
-Todos rodados de dentro da pasta `astro-poc/`:
+Todos rodados a partir da raiz do repositório:
 
 ```bash
 npm install        # uma vez por repo
